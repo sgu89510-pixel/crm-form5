@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Форма заявки</title>
+<title>Заявка</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -11,16 +11,27 @@
 
 <form id="leadForm">
     Имя:<br>
-    <input type="text" name="firstName" required><br><br>
+    <input type="text" name="firstname" required><br><br>
 
     Фамилия:<br>
-    <input type="text" name="lastName" required><br><br>
+    <input type="text" name="lastname" required><br><br>
 
     Почта:<br>
     <input type="email" name="email" required><br><br>
 
     Телефон:<br>
-    <input type="text" name="phone" required placeholder="+7700XXXXXXX"><br><br>
+    <input type="text" name="phone" placeholder="+7XXXXXXXXXX" required><br><br>
+
+    Страна:<br>
+    <select name="country" required>
+        <option value="RU">Россия</option>
+        <option value="KZ">Казахстан</option>
+        <option value="UA">Украина</option>
+        <option value="BY">Беларусь</option>
+    </select><br><br>
+
+    Комментарий:<br>
+    <textarea name="comment" rows="4"></textarea><br><br>
 
     <button type="submit">Отправить</button>
 </form>
@@ -32,22 +43,16 @@ document.getElementById("leadForm").addEventListener("submit", async function(e)
     e.preventDefault();
 
     const form = e.target;
-
-    const data = {
-        firstName: form.firstName.value,
-        lastName: form.lastName.value,
-        email: form.email.value,
-        phone: form.phone.value
-    };
+    const data = new FormData(form);
 
     const res = await fetch("/submit", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(data)
+        body: data
     });
 
     const json = await res.json();
-    document.getElementById("result").innerText = "Ответ CRM: " + JSON.stringify(json);
+    document.getElementById("result").innerText =
+        "Ответ CRM: " + JSON.stringify(json);
 });
 </script>
 
