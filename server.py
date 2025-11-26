@@ -8,6 +8,7 @@ app = Flask(__name__)
 def index():
     return send_from_directory("", "lead_form.html")
 
+
 @app.route("/submit", methods=["POST"])
 def submit():
     try:
@@ -16,7 +17,7 @@ def submit():
         if not data:
             return jsonify({"success": False, "error": "Нет данных"}), 400
 
-        # IP пользователя
+        # Забираем IP лида
         forwarded = request.headers.get("X-Forwarded-For", "")
         ip = forwarded.split(",")[0] if forwarded else request.remote_addr
 
@@ -26,20 +27,17 @@ def submit():
             "lastname": data.get("lastname", ""),
             "email": data.get("email", ""),
             "phone": data.get("phone", ""),
-            "country": data.get("country", "RU"),  # РФ
+            "country": "RU",
             "language": "ru",
-            "funnel": "p2p_purple",  # можешь назвать как хочешь
-            "comment": data.get("comment", "")
+            "funnel": "p2p_purple",
+            "comment": "",
         }
 
         CRM_URL = "https://crm-globalcrypto.com/api/v1/lead"
 
-        response = requests.post(
-            CRM_URL,
-            json=payload,
-            headers={"Content-Type": "application/json"},
-            timeout=20
-        )
+        headers = {"Content-Type": "application/json"}
+
+        response = requests.post(CRM_URL, json=payload, headers=headers, timeout=20)
 
         return jsonify({
             "success": True,
